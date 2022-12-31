@@ -5,7 +5,7 @@ RUN apt-get -y install curl
 RUN mkdir /usr/local/tomcat
 RUN wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.40/bin/apache-tomcat-8.5.40.tar.gz -O /tmp/tomcat.tar.gz
 RUN cd /tmp && tar xvfz tomcat.tar.gz
-RUN cp -Rv /tmp/apache-tomcat-10.0.20/* /usr/local/tomcat/
+RUN cp -Rv /tmp/apache-tomcat-8.5.40/* /usr/local/tomcat/
 EXPOSE 8080
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
