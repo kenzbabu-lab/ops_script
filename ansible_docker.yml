@@ -1,0 +1,28 @@
+---
+-hosts: node_server
+become: true
+become_user: root
+vars:
+  source_file: /tmp/node_dir/workspace/package_pipeline/target/addressbook.war
+  target: /usr/local/tomcat/webapps
+  repo_path: https://github.com/kenzbabu-lab/ops_script.git
+  dest_path: /tmp/gitrepo
+  image_name: tomcat_image
+tasks:
+  -name: Install git and docker
+   yum: name={{item}} state=present
+   loop:
+    - git
+    - docker
+  -name: Start docker
+   service: name=docker state=started
+  -name: Clone the git repo on host server
+   git: repo={{repo_path}} dest={{dest_path}}
+  -name: Build docker image
+   command: chdir={{dest_path}} docker build -t {{image_name}} .
+  -name: Create container using bulit docker image
+   command: docker volume create myvol   #/var/lib/docker/volume/myvol is created
+   command: chdir={{dest_path}} docker run --name test_server -itd -p 8181:8080 -v myvol:{{target}} {{image_name}}
+   #/var/lib/docker/volume/myvol is mapped with /usr/local/tomcat/webapps
+  -name: Copy build file to the docker container 
+    copy: src={{source_file}} dest=/var/lib/docker/volume/myvol
