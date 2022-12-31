@@ -1,8 +1,7 @@
-----
+---
 -hosts: node_server
 become: true
-become_user:root
-
+become_user: root
 tasks:
   -name: Install tomcat on the host server
    yum: name=tomcat  state=present
