@@ -26,5 +26,21 @@ pipeline
                 echo "Packing the code to .war file"
             }
         }
+        stage('Deploying code using ansible playbook in docker container')
+        {
+            steps
+            {
+                echo "connecting to ansible host"
+                ansiblePlaybook credentialsId: 'ansible_key', disableHostKeyChecking: true, installation: 'myansible', inventory: 'ansible.inv', playbook: 'ansible_docker.yml'
+            }
+        }
+        stage('Copy the packaged code to weserver')
+        {
+            steps
+            {
+                sh 'cp /tmp/node_dir/workspace/package_pipeline/target/addressbook.war /var/lib/docker/volume/tomcat_repo/_data'
+                echo "Copied the addressbook.war to /var/lib/docker/volume/tomcat_repo/_data"
+            }
+        }
     }
 }
