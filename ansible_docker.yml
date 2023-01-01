@@ -4,7 +4,6 @@
   become: true
   become_user: root
   vars:
-   source_file: /tmp/node_dir/workspace/package_pipeline/target/addressbook.war
    target_path: /usr/local/tomcat/webapps
    repo_path: https://github.com/kenzbabu-lab/ops_script.git
    dest_path: /tmp/gitrepo
@@ -25,5 +24,3 @@
      command: docker volume create tomcat_repo   #/var/lib/docker/volume/tomcat_repo is created
      command: docker run --name test_server -itd -p 8181:8080 -v tomcat_repo:{{target_path}} {{image_name}}
      #/var/lib/docker/volume/tomcat_repo/_data is mapped with /usr/local/tomcat/webapps
-   - name: Copy build file to the docker container
-     copy: src={{source_file}} dest=/tmp/package_copy
