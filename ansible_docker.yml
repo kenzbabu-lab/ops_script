@@ -1,6 +1,6 @@
 ---
 ---
-- hosts: node_server2
+- hosts: webserver
   become: true
   become_user: root
   vars:
@@ -8,7 +8,7 @@
    target_path: /usr/local/tomcat/webapps
    repo_path: https://github.com/kenzbabu-lab/ops_script.git
    dest_path: /tmp/gitrepo
-   image_name: tomcat_image
+   image_name: tomcat_custom
   tasks:
    - name: Install git and docker
      yum: name={{item}} state=present
@@ -19,11 +19,11 @@
      service: name=docker state=started
    - name: Clone the git repo on host server
      git: repo={{repo_path}} dest={{dest_path}}
-   - name: Build docker image
+   - name: Build docker image from tomcat
      command: chdir={{dest_path}} docker build -t {{image_name}} .
-   - name: Create container using bulit docker image
-     command: docker volume create myvol   #/var/lib/docker/volume/myvol is created
-     command: chdir={{dest_path}} docker run --name test_server -itd -p 8181:8080 -v myvol:{{target_path}} {{image_name}}
-     #/var/lib/docker/volume/myvol is mapped with /usr/local/tomcat/webapps
+   - name: Create container using built docker image
+     command: docker volume create tomcat_repo   #/var/lib/docker/volume/tomcat_repo is created
+     command: docker run --name test_server -itd -p 8181:8080 -v tomcat_repo:{{target_path}} {{image_name}}
+     #/var/lib/docker/volume/tomcat_repo/_data is mapped with /usr/local/tomcat/webapps
    - name: Copy build file to the docker container
-     copy: src={{source_file}} dest=/var/lib/docker/volume/myvol
+     copy: src={{source_file}} dest=/tmp/package_copy
