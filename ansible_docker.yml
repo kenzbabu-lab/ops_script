@@ -23,6 +23,7 @@
      command: docker volume create tomcat_repo   #/var/lib/docker/volume/tomcat_repo is created
      command: docker run --name test_server -itd -p 8181:8080 -v tomcat_repo:{{target_path}} {{image_name}}
      #/var/lib/docker/volume/tomcat_repo/_data is mapped with /usr/local/tomcat/webapps
+     #added one line
    - name: Copy the package to repo
      copy: 
          src: /var/lib/jenkins/workspace/pipeline_test/target/addressbook.war
